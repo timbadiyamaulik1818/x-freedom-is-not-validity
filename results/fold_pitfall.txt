@@ -1,0 +1,21 @@
+================================================================
+TWO-STATE vs FOUR-STATE COMPARISON : no initialisation
+================================================================
+cycles compared                     : 107
+cycles divergent (four-state)       : 106
+  of which two-state sees NOTHING   : 0
+divergent bit-cycles (four-state)   : 56609
+  invisible to two-state (x vs 0)   : 46459  (82.1%)
+first divergence, four-state        : cycle 2  pc[1]  RTL=1 GATE=x
+first divergence, two-state         : cycle 2  pc[1]  RTL=1 GATE=x
+
+================================================================
+TWO-STATE vs FOUR-STATE COMPARISON : independent randomisation
+================================================================
+cycles compared                     : 5
+cycles divergent (four-state)       : 5
+  of which two-state sees NOTHING   : 0
+divergent bit-cycles (four-state)   : 2706
+  invisible to two-state (x vs 0)   : 1339  (49.5%)
+first divergence, four-state        : cycle 1  alu_r_w[0]  RTL=x GATE=1
+first divergence, two-state         : cycle 1  alu_r_w[0]  RTL=x GATE=1

@@ -1,0 +1,17 @@
+read_verilog rtl/core_small.v
+hierarchy -check -top core_rtl
+proc
+memory -nomap
+opt
+memory_map
+opt -full
+techmap
+opt -full
+dfflibmap -liberty lib/mocklib.lib
+abc -liberty lib/mocklib.lib
+opt_clean
+clean -purge
+rename core_rtl core_gate
+write_verilog -noattr -noexpr syn/core_gate.v
+write_json syn/core_gate.json
+stat -liberty lib/mocklib.lib

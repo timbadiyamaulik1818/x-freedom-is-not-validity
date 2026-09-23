@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the article."
+title: "X-Freedom Is Not Validity: Certification-Gated Release of Gate-Level Switching Activity for Pre-Silicon Power Analysis"
+authors:
+  - family-names: Timbadiya
+    given-names: Maulik
+type: software

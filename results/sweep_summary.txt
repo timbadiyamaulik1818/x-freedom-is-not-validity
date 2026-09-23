@@ -1,0 +1,24 @@
+ARM C : simulator-side random init of the netlist only
+ARM E : co-initialisation of RTL and netlist from one vector
+
+ARM C  (simulator random init)
+  RTL-equivalence rate : 0/20  (0%)
+  toggles              : min 3464  max 4985  mean 4279
+  signal power (uW)    : min 1.13 max 1.43 mean 1.25  spread 1.3x
+  peak power (uW)      : min 202.9 max 225.4
+  run length (cycles)  : min 5 max 5  distinct [5]
+
+ARM E  (co-initialisation)
+  RTL-equivalence rate : 20/20  (100%)
+  toggles              : min 1536  max 2179  mean 1861
+  signal power (uW)    : min 9.60 max 13.44 mean 11.67  spread 1.4x
+  peak power (uW)      : min 206.9 max 225.1
+  run length (cycles)  : min 5 max 5  distinct [5]
+POWER-UP STATE SENSITIVITY SWEEP  (20 legal vectors, full workload)
+  RTL/GLS equivalence  : 20/20 (100%)
+  workload length      : [107] cycles
+  toggles              : 82554 .. 93732   (mean 86911, sigma 2943)
+  signal power   (uW)  : 11.91 .. 13.58  (mean 12.57, 13.3% spread)
+  total power    (uW)  : 193.20 .. 194.87  (mean 193.86, 0.9% spread)
+  peak power     (uW)  : 189.2 .. 200.7  (6.0% spread)
+  peak-power cycle     : [0, 19, 59, 67]

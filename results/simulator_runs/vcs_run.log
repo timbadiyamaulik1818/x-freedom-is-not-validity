@@ -1,0 +1,41 @@
+Synopsys VCS X-2025.06-SP1_Full64 -- run 2026-08-31 16:19:37 (EDA Playground)
+Command: vcs -full64 -licqueue -timescale=1ns/1ns +vcs+flush+all +warn=all -sverilog design.sv testbench.sv && ./simv
+Note: no register-initialisation switch was supplied; Arm B reported 1449 X
+transitions, confirming VCS did not auto-initialise and the baseline is fair.
+Note: "Top Level Modules: BUFX1, tb" -- BUFX1 is a library cell this netlist
+does not instantiate, elaborated unconnected. Benign.
+
+=====================================================================
+ Cycle-accurate GLS via co-initialisation -- 58 mapped state elements
+=====================================================================
+arm                          | cyc |arch div| state div| gateX | first div
+---------------------------------------------------------------------
+B no init                    |   60 |      59 |     1449 |   1449
+       RTL halted@12   GATE halted@never
+       first divergence: cycle 2  element pc[1]  RTL=1 GATE=x  [X-ORIGIN]
+
+C gate randomised (RTL X)    |   12 |      12 |      500 |      0
+       RTL halted@12   GATE halted@5
+       first divergence: cycle 1  element acc_w[0]  RTL=x GATE=0  [VALUE MISMATCH]
+
+E co-init seed=1             |    5 |       0 |        0 |      0
+       RTL halted@5   GATE halted@5
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=2             |    5 |       0 |        0 |      0
+       RTL halted@5   GATE halted@5
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=1 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=2 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=3 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+CPU Time: 0.550 seconds

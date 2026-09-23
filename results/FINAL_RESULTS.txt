@@ -1,0 +1,192 @@
+=================================================================
+ EXPERIMENTAL RESULTS - cycle-accurate GLS for pre-silicon power
+ design: tinycpu  3-stage 32-bit pipelined CPU
+=================================================================
+
+### 1. DESIGN / SYNTHESIS CHARACTERISATION
+=== tinycpu ===
+
+        +----------Local Count, excluding submodules.
+        |        +-Local Area, excluding submodules.
+        |        | 
+     2817        - wires
+     3555        - wire bits
+       34        - public wires
+      772        - public wire bits
+       11        - ports
+      145        - port bits
+     3496    12837 cells
+       59      177   AND2X1
+      338     1014   AOI21X1
+       34      272   DFFRX1
+      646     3876   DFFX1
+      125      125   INVX1
+     1146     4584   MUX2X1
+      515     1030   NAND2X1
+      263      526   NOR2X1
+      223      669   OAI21X1
+       24       72   OR2X1
+      101      404   XNOR2X1
+       22       88   XOR2X1
+
+   Chip area for module '\tinycpu': 12837.000000
+
+RTL declared regs     : alu_r alu_r_w dmem halted ir_d op_w pc pc_d pc_w rd_w rf v_d v_w we_w
+provenance fingerprint : rtl=68c2df02697fe300 netlist=b725f3c496e845c5 state=93db6a3da045a3de
+mapped state elements : 680  (unresolved 0)
+renamed by synthesis  : 121  (17.8%) -- naive name match would mis-seed these
+
+rename classes:
+  netlist retire_val_o     -> RTL alu_r_w        32 bits
+  netlist retire_pc_o      -> RTL pc_w           32 bits
+  netlist pc_o             -> RTL pc             26 bits
+  netlist imm_d            -> RTL ir_d           16 bits
+  netlist imem_addr        -> RTL pc              6 bits
+  netlist retire_op_o      -> RTL op_w            4 bits
+  netlist retire_rd_o      -> RTL rd_w            3 bits
+  netlist retire_v_o       -> RTL v_w             1 bits
+  netlist halted_o         -> RTL halted          1 bits
+
+RTL state groups covered:
+  rf[]            256 bits
+  dmem[]          256 bits
+  pc               32 bits
+  pc_d             32 bits
+  alu_r_w          32 bits
+  pc_w             32 bits
+  ir_d             29 bits
+  op_w              4 bits
+  rd_w              3 bits
+  v_d               1 bits
+  v_w               1 bits
+  we_w              1 bits
+  halted            1 bits
+
+### 2. EQUIVALENCE : ARM B  (gate-level, no initialisation)
+==================================================================
+DIVERGENCE REPORT : ARM B: no init
+==================================================================
+golden cycles 107   dut cycles 400   compared 107
+!! LENGTH MISMATCH - execution length differs by 293 cycles
+RESULT            : DIVERGENT
+divergent cycles  : 106 / 107  (99.1%)
+X-corrupted cycles: 106 / 107  (99.1%)
+
+--- FIRST DIVERGENCE ------------------------------------------
+cycle             : 2
+fields            : pc
+X-corrupted here  : pc
+retiring instr    : pc=0x00000000  op=BNZ  rd=r0
+  golden          : pc=00000002
+  dut             : pc=0000XxxX
+
+--- FIELD BREAKDOWN -------------------------------------------
+  pc          diverged 106 cycles   (X-corrupt in 106)
+  halted      diverged 104 cycles   (X-corrupt in 104)
+  retire_pc   diverged 104 cycles   (X-corrupt in 104)
+  retire_op   diverged 104 cycles   (X-corrupt in 104)
+  retire_rd   diverged 104 cycles   (X-corrupt in 104)
+  retire_val  diverged  91 cycles   (X-corrupt in  91)
+
+--- CONTEXT (cycles 0..5) -----------------------------------
+  cyc   G:pc      G:rpc     G:op G:rval    | D:pc      D:op D:rval   
+  1     00000001  00000000  9    xxxxxxxx  | 00000001  9    xxxxxxxx 
+<<2     00000002  00000000  9    xxxxxxxx  | 0000XxxX  9    xxxxxxxx 
+  3     00000003  00000001  0    xxxxxxxx  | 0000XxxX  0    xxxxxxxx 
+  4     00000004  00000002  8    0000000c  | xxxxxxxx  x    xxxxxxxx 
+  5     00000005  00000003  8    00000000  | xxxxxxxx  x    xxxxxxxx 
+  6     00000006  00000004  8    000003f5  | xxxxxxxx  x    xxxxxxxx 
+
+====================================================================
+STATE-LEVEL DIVERGENCE LOCALISATION : ARM B: no init
+====================================================================
+cycles compared      : 107
+RESULT               : STATE DIVERGENT
+diverging state bits : 24 distinct storage words
+
+--- ROOT CAUSE : first state element to differ -------------------
+  cycle            : 2
+  state element    : pc[1]
+  RTL value        : 1
+  gate value       : x
+  classification   : X-ORIGIN (gate unknown, RTL determinate)
+
+--- first cycle at which each storage word diverges --------------
+  cycle 2    pc            (3356 bit-cycles divergent, 3356 X-origin)
+  cycle 3    ir_d          (3045 bit-cycles divergent, 3045 X-origin)
+  cycle 3    pc_d          (3324 bit-cycles divergent, 3324 X-origin)
+  cycle 4    alu_r_w       (2912 bit-cycles divergent, 2912 X-origin)
+  cycle 4    halted        (104 bit-cycles divergent, 104 X-origin)
+  cycle 4    op_w          (416 bit-cycles divergent, 416 X-origin)
+  cycle 4    pc_w          (3292 bit-cycles divergent, 3292 X-origin)
+  cycle 4    rd_w          (312 bit-cycles divergent, 312 X-origin)
+  cycle 4    we_w          (104 bit-cycles divergent, 104 X-origin)
+  cycle 5    rf[1]         (3296 bit-cycles divergent, 3296 X-origin)
+  cycle 6    rf[2]         (3264 bit-cycles divergent, 3264 X-origin)
+  cycle 7    rf[3]         (3232 bit-cycles divergent, 3232 X-origin)
+  cycle 8    rf[4]         (3200 bit-cycles divergent, 3200 X-origin)
+  cycle 9    rf[7]         (3168 bit-cycles divergent, 3168 X-origin)
+
+### 3. EQUIVALENCE : ARM C  (simulator-side random init, RTL untouched)
+==================================================================
+DIVERGENCE REPORT : ARM C: +initreg random seed7
+==================================================================
+golden cycles 107   dut cycles 5   compared 5
+!! LENGTH MISMATCH - execution length differs by 102 cycles
+RESULT            : DIVERGENT
+divergent cycles  : 5 / 5  (100.0%)
+X-corrupted cycles: 0 / 5  (0.0%)
+
+--- FIRST DIVERGENCE ------------------------------------------
+cycle             : 1
+fields            : retire_val
+X-corrupted here  : none (value mismatch, not X)
+retiring instr    : pc=0x00000000  op=BNZ  rd=r0
+  golden          : retire_val=xxxxxxxx
+  dut             : retire_val=a20840ff
+
+--- FIELD BREAKDOWN -------------------------------------------
+  pc          diverged   4 cycles   (X-corrupt in   0)
+  halted      diverged   1 cycles   (X-corrupt in   0)
+  retire_pc   diverged   2 cycles   (X-corrupt in   0)
+  retire_op   diverged   1 cycles   (X-corrupt in   0)
+  retire_rd   diverged   1 cycles   (X-corrupt in   0)
+  retire_val  diverged   5 cycles   (X-corrupt in   0)
+
+--- CONTEXT (cycles 0..4) -----------------------------------
+  cyc   G:pc      G:rpc     G:op G:rval    | D:pc      D:op D:rval   
+<<1     00000001  00000000  9    xxxxxxxx  | 00000001  9    a20840ff 
+  2     00000002  00000000  9    xxxxxxxx  | 00000014  9    a20840ff 
+  3     00000003  00000001  0    xxxxxxxx  | 00000015  0    3cc9d6d9 
+  4     00000004  00000002  8    0000000c  | 00000016  8    00000063 
+  5     00000005  00000003  8    00000000  | 00000016  f    3cc9d6d9 
+
+### 4. EQUIVALENCE : ARM E  (co-initialisation, this method)
+==================================================================
+DIVERGENCE REPORT : ARM E: co-init
+==================================================================
+golden cycles 107   dut cycles 107   compared 107
+RESULT            : MATCH  - bit-identical for all 107 cycles
+X-corrupted cycles: 0
+
+====================================================================
+STATE-LEVEL DIVERGENCE LOCALISATION : ARM E: co-init
+====================================================================
+cycles compared      : 107
+RESULT               : STATE MATCH - all 680 flops identical every cycle
+
+### 5. SWITCHING ACTIVITY AND POWER  (common 107-cycle window)
+REF co-init (cycle-accurate)   cyc=107  tog=71910  Xtr=0     ( 0.0%) Psig=  10.05 Pclk=171.02 Pleak=10.27 Ptot= 191.34 uW  peak= 188.22@70
+ARM B no init (X-corrupt)      cyc=107  tog=757    Xtr=2290  (67.3%) Psig=   0.06 Pclk=171.02 Pleak=10.27 Ptot= 181.35 uW  peak= 173.28@5
+ARM C simulator random init    cyc=107  tog=4502   Xtr=0     ( 0.0%) Psig=   1.15 Pclk=171.02 Pleak=10.27 Ptot= 182.44 uW  peak= 214.60@0
+
+arm                               toggles   err vs ref     Psig(uW)   err vs ref
+REF co-init                         71910         0.0%        10.05         0.0%
+ARM B no init                         757       -98.9%         0.06       -99.4%
+ARM C sim-random                     4502       -93.7%         1.15       -88.6%
+
+arm                                peak(uW)   peak cyc  X-transitions
+REF co-init                           188.2         70              0 (0.0%)
+ARM B no init                         173.3          5           2290 (67.3%)
+ARM C sim-random                      214.6          0              0 (0.0%)
+

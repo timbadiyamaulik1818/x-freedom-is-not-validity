@@ -1,0 +1,6 @@
+CHECKPOINT TRANSPLANT (RTL snapshot at cycle 30)
+  gate-level run starts at cycle : 31
+  overlapping cycles             : 77  (31..107)
+  architectural mismatches       : 0
+cycles compared      : 77
+RESULT               : STATE MATCH - all 680 flops identical every cycle

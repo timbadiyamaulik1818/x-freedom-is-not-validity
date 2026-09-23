@@ -1,0 +1,43 @@
+
+=====================================================================
+ Cycle-accurate GLS via co-initialisation -- 58 mapped state elements
+=====================================================================
+arm                          | cyc |arch div| state div| gateX | first div
+---------------------------------------------------------------------
+B no init                    |   60 |      59 |     1449 |   1449
+       RTL halted@12   GATE halted@never
+       first divergence: cycle 2  element pc[1]  RTL=1 GATE=x  [X-ORIGIN]
+
+C gate randomised (RTL X)    |   12 |      12 |      500 |      0
+       RTL halted@12   GATE halted@5
+       first divergence: cycle 1  element acc_w[0]  RTL=x GATE=0  [VALUE MISMATCH]
+
+E co-init seed=1             |    5 |       0 |        0 |      0
+       RTL halted@5   GATE halted@5
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=2             |    5 |       0 |        0 |      0
+       RTL halted@5   GATE halted@5
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=1 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=2 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=3 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+Interpretation:
+  ARM C removes every X from the netlist yet still diverges from RTL.
+  X-freedom is therefore NOT evidence that gate activity is valid.
+  ARM E shares ONE power-up vector across both models -> lockstep.
+  Constrained ARM E fixes rf[1] (state boot firmware guarantees) and
+  sweeps the remaining 44 free elements: every member stays in lockstep
+  AND runs the full workload, so its activity is valid for power.
+
+edaplayground/testbench.sv:395: $finish called at 1386000 (1ps)

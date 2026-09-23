@@ -1,0 +1,16 @@
+read_verilog rtl/cpu.v
+hierarchy -check -top tinycpu
+proc
+memory -nomap
+opt
+memory_map
+opt -full
+techmap
+opt -full
+dfflibmap -liberty lib/mocklib.lib
+abc -liberty lib/mocklib.lib
+opt_clean
+clean -purge
+write_verilog -noattr -noexpr syn/cpu_netlist.v
+write_json syn/cpu_netlist.json
+stat -liberty lib/mocklib.lib

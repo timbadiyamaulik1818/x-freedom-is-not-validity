@@ -1,0 +1,22 @@
+REPEATED EQUAL-WORKLOAD TIMING   (N=21 per configuration, median [IQR], ms)
+
+  RTL, 107 cycles, no dump                           12.8   [12.4-14.9]
+  GLS co-init, 107 cycles, no dump                  154.6   [132.3-168.9]
+  GLS co-init + per-cycle state dump, 107 cyc       156.3   [130.4-199.6]
+  GLS, no deposit, 1 cycle                           99.8   [88.3-111.3]
+  GLS, with deposit, 1 cycle                         99.3   [89.9-115.9]
+  GLS co-init, cycles 1-107                         146.5   [135.6-167.3]
+  GLS from checkpoint, cycles 31-107                138.9   [124.2-156.2]
+  offline four-state compare (680 flops)             46.0   [44.2-52.3]
+  build correspondence map                           62.9   [61.7-74.5]
+
+derived (medians):
+  deposit cost              -0.5 ms  (-0.5% of a 1-cycle GLS run)
+  per-cycle state dump      +1.7 ms  (+1.1% over co-init GLS, 107 cycles)
+  GLS / RTL slowdown        12.04x
+  checkpoint run            94.9% of full run
+
+note: every run is a separate process of well under one second, so fixed
+process start-up and elaboration cost is included in every figure and
+dominates at this design size; percentages understate what per-cycle
+costs would be on a long workload and should not be extrapolated.

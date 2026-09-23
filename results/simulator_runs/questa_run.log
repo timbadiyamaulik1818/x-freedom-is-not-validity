@@ -1,0 +1,39 @@
+Siemens QuestaSim-64 2025.2 (vlog/vopt/vsim 2025.05) -- run 2026-08-31 16:21:07 (EDA Playground)
+Command: qrun -batch -access=rw+/. -timescale 1ns/1ns -mfcu design.sv testbench.sv -voptargs="+acc=npr" -do "run -all; exit"
+Note: -access=rw+/. and +acc=npr were required to preserve hierarchical access;
+without them vopt folds the flop instances away and the deposits cannot bind.
+Note: vopt-10587 (+acc slows simulation) and the BUFX1 second top are benign.
+Errors: 0.
+
+=====================================================================
+ Cycle-accurate GLS via co-initialisation -- 58 mapped state elements
+=====================================================================
+arm                          | cyc |arch div| state div| gateX | first div
+---------------------------------------------------------------------
+B no init                    |   60 |      59 |     1449 |   1449
+       RTL halted@12   GATE halted@never
+       first divergence: cycle 2  element pc[1]  RTL=1 GATE=x  [X-ORIGIN]
+
+C gate randomised (RTL X)    |   12 |      12 |      500 |      0
+       RTL halted@12   GATE halted@5
+       first divergence: cycle 1  element acc_w[0]  RTL=x GATE=0  [VALUE MISMATCH]
+
+E co-init seed=1             |    5 |       0 |        0 |      0
+       RTL halted@5   GATE halted@5
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=2             |    5 |       0 |        0 |      0
+       RTL halted@5   GATE halted@5
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=1 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=2 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
+
+E co-init seed=3 constrained |   12 |       0 |        0 |      0
+       RTL halted@12   GATE halted@12
+       MATCH: all 58 mapped state elements identical every cycle
